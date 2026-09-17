@@ -4,7 +4,7 @@
   Example:
   const API_URL = "https://desa-kula-ai.YOUR-SUBDOMAIN.workers.dev/generate";
 */
-const API_URL = "PASTE_BACKEND_URL_HERE";
+const API_URL = "https://desa-kula-ai.bangziest.workers.dev/generate";
 
 const $ = (id) => document.getElementById(id);
 
