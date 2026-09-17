@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Desa Kula AI Studio</title>
+  <meta name="description" content="Desa Kula AI Studio — Content Planner untuk produksi video storytelling desa.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div class="brand-mark">DK</div>
+      <div>
+        <div class="eyebrow">DESA KULA</div>
+        <h1>AI Studio</h1>
+        <p>Membaca • Menulis • Membumi di Desa</p>
+      </div>
+      <div class="badge">V1 • Content Planner</div>
+    </header>
+
+    <section class="panel">
+      <div class="section-title">
+        <div>
+          <span class="step">01</span>
+          <h2>Buat konten baru</h2>
+        </div>
+        <span class="status" id="status">Siap</span>
+      </div>
+
+      <label for="topic">Topik konten</label>
+      <textarea id="topic" rows="3" placeholder="Contoh: Kenapa anak muda desa banyak memilih pergi ke kota?"></textarea>
+
+      <div class="grid">
+        <div>
+          <label for="category">Kategori</label>
+          <select id="category">
+            <option>Cerita Desa</option>
+            <option>Ekonomi Desa</option>
+            <option>Dana Desa</option>
+            <option>Regulasi Desa</option>
+            <option>Pemerintahan Desa</option>
+            <option>Desa Masa Depan</option>
+          </select>
+        </div>
+        <div>
+          <label for="duration">Durasi minimal</label>
+          <select id="duration">
+            <option value="10">10 menit</option>
+            <option value="12">12 menit</option>
+            <option value="15">15 menit</option>
+            <option value="20">20 menit</option>
+            <option value="30">30 menit</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="style">Gaya narasi</label>
+      <select id="style">
+        <option>Desa Kula Documentary</option>
+        <option>Storytelling Human Interest</option>
+        <option>Explainer Desa</option>
+        <option>Analisis Kebijakan Desa</option>
+      </select>
+
+      <button id="generateBtn" class="primary">✨ GENERATE CONTENT PLAN</button>
+      <p class="hint">V1 ini membuat rancangan konten secara lokal di browser. Koneksi AI, riset web, voice-over, dan video generator akan ditambahkan pada tahap berikutnya.</p>
+    </section>
+
+    <section id="result" class="result hidden">
+      <div class="panel">
+        <div class="section-title">
+          <div><span class="step">02</span><h2>Content Plan</h2></div>
+          <button id="copyBtn" class="secondary">Salin</button>
+        </div>
+        <div id="contentPlan"></div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <div><span class="step">03</span><h2>Storyboard</h2></div>
+        </div>
+        <div id="storyboard" class="storyboard"></div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title">
+          <div><span class="step">04</span><h2>Paket YouTube</h2></div>
+        </div>
+        <div id="youtubePack"></div>
+      </div>
+    </section>
+
+    <footer>
+      Desa Kula AI Studio • Fondasi produksi konten 10+ menit
+    </footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
