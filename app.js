@@ -1,124 +1,114 @@
+/*
+  Desa Kula AI Studio V2
+  Set API_URL to your deployed backend URL.
+  Example:
+  const API_URL = "https://desa-kula-ai.YOUR-SUBDOMAIN.workers.dev/generate";
+*/
+const API_URL = "PASTE_BACKEND_URL_HERE";
+
 const $ = (id) => document.getElementById(id);
 
-function titleCase(text){
-  return text.trim().replace(/\s+/g," ");
+function esc(s=""){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-function makePlan(topic, category, duration, style){
-  const t = titleCase(topic) || "Fenomena yang sedang berubah di desa";
-  const minutes = Number(duration);
-  const words = Math.round(minutes * 155);
-
-  const hook = `Ada satu hal tentang desa yang sering kita lihat, tetapi jarang kita bedah lebih dalam: ${t.toLowerCase()}. Sebenarnya, apa yang sedang terjadi?`;
-  const question = `Mengapa ${t.toLowerCase()} dan apa dampaknya bagi masyarakat desa?`;
-
-  const outline = [
-    ["01","Hook & fenomena","Buka dengan pertanyaan yang dekat dengan kehidupan penonton."],
-    ["02","Mengapa topik ini penting","Bangun konteks tanpa langsung memberi kesimpulan."],
-    ["03","Data & fakta","Masukkan data, regulasi, atau sumber yang relevan dan dapat diverifikasi."],
-    ["04","Cerita manusia","Terjemahkan isu menjadi pengalaman warga, pelaku usaha, perangkat desa, atau keluarga."],
-    ["05","Bedah penyebab","Uraikan faktor ekonomi, sosial, kebijakan, teknologi, atau kelembagaan yang relevan."],
-    ["06","Dampak bagi desa","Tunjukkan siapa yang terdampak dan bagaimana mekanismenya."],
-    ["07","Sudut pandang lain","Tampilkan penjelasan alternatif atau keterbatasan agar pembahasan tidak satu sisi."],
-    ["08","Apa yang bisa dipelajari","Tarik pelajaran berbasis fakta, bukan vonis."],
-    ["09","Penutup reflektif","Akhiri dengan satu pertanyaan yang mengajak penonton berpikir."]
-  ];
-
-  const sceneCount = Math.max(18, Math.round(minutes * 3));
-  const sceneTemplates = [
-    ["Pembuka desa","Establishing shot suasana desa Indonesia, pagi hari, realistis-dokumenter.","Visual pembuka"],
-    ["Tokoh manusia","Satu warga sebagai pusat cerita, ekspresi natural, tidak berlebihan.","Human interest"],
-    ["Aktivitas","Aktivitas warga yang terkait langsung dengan topik.","Kehidupan nyata"],
-    ["Data","Grafik sederhana dengan satu angka/fakta utama.","Data visual"],
-    ["Dokumen","Ilustrasi dokumen/aturan/APB Desa yang relevan.","Explainer"],
-    ["Kontras","Perbandingan dua kondisi yang membantu menjelaskan masalah.","Kontras"],
-    ["Detail","Close-up objek: uang, hasil panen, ponsel, buku, jalan, pasar, dll.","B-roll"],
-    ["Transisi","Kembali ke lanskap desa untuk memberi jeda narasi.","Jeda visual"]
-  ];
-
-  const scenes = Array.from({length:sceneCount}, (_,i)=>{
-    const x = sceneTemplates[i % sceneTemplates.length];
-    return {
-      no:i+1,
-      time:`Scene ${i+1}`,
-      label:x[0],
-      visual:`${x[1]} Gaya: ${style}.`,
-      role:x[2]
-    };
-  });
-
-  const paragraphs = [
-    `Naskah ini dirancang untuk sekitar ${minutes} menit dengan target sekitar ${words.toLocaleString("id-ID")} kata.`, 
-    `Topik utama: ${t}.`,
-    `Kategori: ${category}.`,
-    `Alur: fenomena → pertanyaan → konteks → data → cerita manusia → analisis → sudut pandang lain → pelajaran → penutup.`,
-    `Catatan produksi: setiap klaim faktual tentang kebijakan, anggaran, regulasi, atau kondisi terkini harus diverifikasi dengan sumber primer/terpercaya sebelum video dipublikasikan.`
-  ];
-
-  return {t, hook, question, outline, scenes, paragraphs, minutes};
-}
-
-function renderPlan(plan){
+function render(data){
+  const plan = data.content_plan || {};
+  const outline = plan.outline || [];
   $("contentPlan").innerHTML = `
-    <div class="card"><h3>Hook</h3><p>${plan.hook}</p></div>
-    <div class="card"><h3>Pertanyaan Utama</h3><p>${plan.question}</p></div>
-    <div class="card"><h3>Target Produksi</h3><p>${plan.minutes} menit minimum • ${Math.round(plan.minutes*155).toLocaleString("id-ID")} kata target • format documentary storytelling.</p></div>
-    <div class="card"><h3>Outline</h3><p>${plan.outline.map(x=>`<b>${x[0]} ${x[1]}</b><br>${x[2]}<br>`).join("<br>")}</p></div>
-    <div class="card"><h3>Catatan</h3><p>${plan.paragraphs.join("<br>")}</p></div>
+    <div class="card"><h3>Judul kerja</h3><p>${esc(plan.title)}</p></div>
+    <div class="card"><h3>Hook</h3><p>${esc(plan.hook)}</p></div>
+    <div class="card"><h3>Pertanyaan utama</h3><p>${esc(plan.main_question)}</p></div>
+    <div class="card"><h3>Angle</h3><p>${esc(plan.angle)}</p></div>
+    <div class="card"><h3>Outline</h3><p>${outline.map((x,i)=>`${String(i+1).padStart(2,"0")}. ${esc(x)}`).join("\n")}</p></div>
   `;
-  $("storyboard").innerHTML = plan.scenes.map(s=>`
-    <div class="scene">
-      <div class="scene-num">${String(s.no).padStart(2,"0")}</div>
-      <div><b>${s.label}</b><small>${s.role}</small></div>
-      <div class="scene-visual">${s.visual}</div>
-    </div>`).join("");
 
+  const script = data.script || "";
+  $("scriptText").textContent = script;
+  const words = script.trim() ? script.trim().split(/\s+/).length : 0;
+  $("wordCount").textContent = `${words.toLocaleString("id-ID")} kata`;
+
+  const scenes = data.storyboard || [];
+  $("storyboard").innerHTML = scenes.map((s,i)=>`
+    <div class="scene">
+      <div class="scene-num">${String(i+1).padStart(2,"0")}</div>
+      <div><b>${esc(s.title || `Scene ${i+1}`)}</b><small>${esc(s.narration || "")}</small></div>
+      <div class="scene-visual"><b>VISUAL</b><br>${esc(s.visual_prompt || "")}<br><br><b>ON-SCREEN</b><br>${esc(s.on_screen_text || "-")}</div>
+    </div>
+  `).join("");
+
+  const yt = data.youtube || {};
   $("youtubePack").innerHTML = `
-    <div class="card"><h3>Judul kerja</h3><p>${plan.t}</p></div>
-    <div class="card"><h3>Alternatif judul</h3><p>
-      Kenapa ${plan.t.toLowerCase()}?<br>
-      Yang Sebenarnya Terjadi di Balik ${plan.t}<br>
-      Cerita Desa: ${plan.t}
-    </p></div>
-    <div class="card"><h3>Deskripsi</h3><p>Video Desa Kula membahas ${plan.t.toLowerCase()} melalui storytelling, data, dan konteks kehidupan masyarakat desa.</p></div>
-    <div class="card"><h3>Tag</h3><span class="tag">desa</span><span class="tag">desa indonesia</span><span class="tag">pemerintahan desa</span><span class="tag">ekonomi desa</span><span class="tag">Desa Kula</span></div>
+    <div class="card"><h3>Alternatif judul</h3><p>${(yt.titles||[]).map((x,i)=>`${i+1}. ${esc(x)}`).join("\n")}</p></div>
+    <div class="card"><h3>Deskripsi</h3><p>${esc(yt.description)}</p></div>
+    <div class="card"><h3>Thumbnail text</h3><p>${esc(yt.thumbnail_text)}</p></div>
+    <div class="card"><h3>Tag</h3><p>${(yt.tags||[]).map(x=>`<span class="tag">${esc(x)}</span>`).join("")}</p></div>
   `;
 }
 
-$("generateBtn").addEventListener("click", ()=>{
+$("generateBtn").addEventListener("click", async ()=>{
   const topic = $("topic").value.trim();
-  if(!topic){
-    $("topic").focus();
-    $("status").textContent = "Masukkan topik";
+  if(!topic){ $("topic").focus(); $("status").textContent="Masukkan topik"; return; }
+  if(API_URL === "PASTE_BACKEND_URL_HERE"){
+    $("status").textContent="Backend belum dipasang";
+    $("result").classList.remove("hidden");
+    $("contentPlan").innerHTML = `<div class="error"><b>Backend AI belum terhubung.</b><br>Deploy backend terlebih dahulu, lalu masukkan URL-nya ke variabel <code>API_URL</code> di <code>app.js</code>.</div>`;
     return;
   }
-  $("status").textContent = "Membuat...";
-  setTimeout(()=>{
-    const plan = makePlan(topic, $("category").value, $("duration").value, $("style").value);
-    renderPlan(plan);
-    $("result").classList.remove("hidden");
+
+  const payload = {
+    topic,
+    category: $("category").value,
+    duration: Number($("duration").value),
+    style: $("style").value
+  };
+
+  $("generateBtn").disabled = true;
+  $("status").textContent = "AI sedang menulis...";
+  $("result").classList.remove("hidden");
+  $("contentPlan").innerHTML = `<div class="card"><p>AI sedang menyusun riset angle, struktur, naskah 10+ menit, storyboard, dan paket YouTube. Mohon tunggu...</p></div>`;
+  $("scriptText").textContent = "";
+  $("storyboard").innerHTML = "";
+  $("youtubePack").innerHTML = "";
+
+  try{
+    const res = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+    const raw = await res.text();
+    let data;
+    try{ data = JSON.parse(raw); }catch{ throw new Error(raw || "Respons backend tidak valid."); }
+    if(!res.ok) throw new Error(data.error || "Backend AI gagal.");
+    render(data);
     $("status").textContent = "Selesai";
-    window.scrollTo({top:$("result").offsetTop-15, behavior:"smooth"});
-    window.currentPlan = plan;
-  }, 450);
+    window.currentData = data;
+    window.scrollTo({top:$("result").offsetTop-15,behavior:"smooth"});
+  }catch(err){
+    $("status").textContent = "Gagal";
+    $("contentPlan").innerHTML = `<div class="error"><b>Gagal membuat konten.</b><br>${esc(err.message)}</div>`;
+  }finally{
+    $("generateBtn").disabled = false;
+  }
 });
 
 $("copyBtn").addEventListener("click", async ()=>{
-  if(!window.currentPlan) return;
-  const p = window.currentPlan;
+  const d = window.currentData;
+  if(!d) return;
   const text = [
     "DESA KULA AI STUDIO",
-    `TOPIK: ${p.t}`,
-    `HOOK: ${p.hook}`,
-    `PERTANYAAN: ${p.question}`,
-    `DURASI: ${p.minutes} menit`,
+    d.content_plan?.title || "",
     "",
-    "OUTLINE:",
-    ...p.outline.map(x=>`${x[0]} ${x[1]} — ${x[2]}`)
+    "HOOK",
+    d.content_plan?.hook || "",
+    "",
+    "NASKAH",
+    d.script || ""
   ].join("\n");
   try{
     await navigator.clipboard.writeText(text);
     $("copyBtn").textContent="Tersalin ✓";
     setTimeout(()=>$("copyBtn").textContent="Salin",1500);
-  }catch(e){ alert(text); }
+  }catch{ alert(text); }
 });
