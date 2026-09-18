@@ -3,110 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Desa Kula AI Studio — V4 Story Engine</title>
+  <title>Desa Kula AI Studio — V5 Research Engine</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="app">
-    <header class="hero">
-      <div class="brand">DESA KULA <span>AI STUDIO</span></div>
-      <p>Membaca • Menulis • Membumi di Desa</p>
-      <div class="version">V4 • STORY ENGINE</div>
-    </header>
+<main class="app">
+  <header class="hero">
+    <div class="brand">DESA KULA <span>AI STUDIO</span></div>
+    <p>Membaca • Menulis • Membumi di Desa</p>
+    <div class="version">V5 • RESEARCH ENGINE</div>
+  </header>
 
-    <section class="card">
-      <h2>Bahan Cerita</h2>
-      <p class="hint">Masukkan topik singkat, atau paste artikel/naskah yang ingin diolah. AI akan mempertahankan pesan utama dan mengikuti arahan alur Anda.</p>
+  <section class="card">
+    <h2>Bahan Cerita & Riset</h2>
+    <p class="hint">
+      Masukkan topik atau artikel. Untuk Dana Desa, regulasi, berita, kebijakan, dan data,
+      AI dapat melakukan riset web lalu memisahkan fakta, sumber, dan bagian naratif.
+    </p>
 
-      <label for="topic">TOPIK SINGKAT</label>
-      <input id="topic" type="text" placeholder="Contoh: Kenapa anak muda desa banyak memilih pergi ke kota?">
+    <label for="topic">TOPIK SINGKAT</label>
+    <input id="topic" type="text" placeholder="Contoh: Dana Desa 2026 digunakan untuk apa saja?">
 
-      <label for="sourceText">ARTIKEL / BAHAN CERITA</label>
-      <textarea id="sourceText" rows="12" placeholder="Paste artikel, berita, bahan riset, atau naskah Anda di sini..."></textarea>
+    <label for="sourceText">ARTIKEL / BAHAN CERITA</label>
+    <textarea id="sourceText" rows="11" placeholder="Paste artikel, berita, bahan riset, atau naskah Anda di sini..."></textarea>
 
-      <label for="direction">ARAHAN ALUR YANG ANDA INGINKAN</label>
-      <textarea id="direction" rows="5" placeholder="Contoh: Buka dengan cerita seorang pemuda desa. Jangan langsung membahas data. Bangun rasa penasaran sampai menit ke-2. Jelaskan regulasi dengan bahasa sederhana dan akhiri dengan refleksi."></textarea>
+    <label for="direction">ARAHAN ALUR YANG ANDA INGINKAN</label>
+    <textarea id="direction" rows="5" placeholder="Contoh: Buka dengan cerita seorang kepala desa. Jangan langsung membahas pasal. Jelaskan aturan dengan bahasa sederhana dan akhiri dengan refleksi."></textarea>
 
-      <div class="grid">
-        <div>
-          <label for="category">MODE KONTEN</label>
-          <select id="category">
-            <option value="Cerita Desa">Cerita Desa</option>
-            <option value="Dana Desa">Dana Desa</option>
-            <option value="Regulasi Desa">Regulasi Desa</option>
-            <option value="Berita Desa">Berita Desa</option>
-            <option value="Data Desa">Data Desa</option>
-            <option value="Human Story">Human Story</option>
-          </select>
-        </div>
-        <div>
-          <label for="style">GAYA CERITA</label>
-          <select id="style">
-            <option value="Animated Documentary">Animated Documentary</option>
-            <option value="Documentary">Documentary</option>
-            <option value="Human Story">Human Story</option>
-            <option value="Data Story">Data Story</option>
-            <option value="Explainer">Explainer</option>
-          </select>
-        </div>
+    <div class="grid">
+      <div>
+        <label for="category">MODE KONTEN</label>
+        <select id="category">
+          <option value="Cerita Desa">Cerita Desa</option>
+          <option value="Dana Desa">Dana Desa</option>
+          <option value="Regulasi Desa">Regulasi Desa</option>
+          <option value="Berita Desa">Berita Desa</option>
+          <option value="Data Desa">Data Desa</option>
+          <option value="Human Story">Human Story</option>
+        </select>
       </div>
-
-      <div class="grid">
-        <div>
-          <label for="characterMode">KARAKTER</label>
-          <select id="characterMode">
-            <option value="AI Tentukan Otomatis">AI Tentukan Otomatis</option>
-            <option value="Gunakan 1 Karakter Utama">Gunakan 1 Karakter Utama</option>
-            <option value="Tanpa Karakter">Tanpa Karakter / Explainer</option>
-          </select>
-        </div>
-        <div>
-          <label for="duration">DURASI MINIMUM</label>
-          <select id="duration">
-            <option value="10 menit">10 menit</option>
-            <option value="12 menit">12 menit</option>
-            <option value="15 menit">15 menit</option>
-            <option value="20 menit">20 menit</option>
-          </select>
-        </div>
+      <div>
+        <label for="style">GAYA CERITA</label>
+        <select id="style">
+          <option value="Animated Documentary">Animated Documentary</option>
+          <option value="Documentary">Documentary</option>
+          <option value="Human Story">Human Story</option>
+          <option value="Data Story">Data Story</option>
+          <option value="Explainer">Explainer</option>
+        </select>
       </div>
+    </div>
 
-      <button id="generateBtn">✨ GENERATE STORY</button>
-      <div id="status" class="status"></div>
-    </section>
-
-    <section id="result" class="results hidden">
-      <div class="card">
-        <h2>Story Concept</h2>
-        <div id="concept"></div>
+    <div class="grid">
+      <div>
+        <label for="characterMode">KARAKTER</label>
+        <select id="characterMode">
+          <option value="AI Tentukan Otomatis">AI Tentukan Otomatis</option>
+          <option value="Gunakan 1 Karakter Utama">Gunakan 1 Karakter Utama</option>
+          <option value="Tanpa Karakter">Tanpa Karakter / Explainer</option>
+        </select>
       </div>
-
-      <div class="card">
-        <h2>Character Bible</h2>
-        <div id="character"></div>
+      <div>
+        <label for="duration">DURASI MINIMUM</label>
+        <select id="duration">
+          <option value="10 menit">10 menit</option>
+          <option value="12 menit">12 menit</option>
+          <option value="15 menit">15 menit</option>
+          <option value="20 menit">20 menit</option>
+        </select>
       </div>
+    </div>
 
-      <div class="card">
-        <h2>Story Bible</h2>
-        <div id="story"></div>
-      </div>
+    <div class="research-box">
+      <label class="check">
+        <input id="useResearch" type="checkbox" checked>
+        <span><b>🔎 RISET WEB</b><small>Gunakan sumber web terbaru dan tampilkan sumber/verifikasi di hasil.</small></span>
+      </label>
+      <label for="sourcePriority">PRIORITAS SUMBER</label>
+      <select id="sourcePriority">
+        <option value="Otomatis sesuai topik">Otomatis sesuai topik</option>
+        <option value="Sumber resmi pemerintah/regulasi">Sumber resmi pemerintah/regulasi</option>
+        <option value="Sumber resmi + media kredibel">Sumber resmi + media kredibel</option>
+      </select>
+    </div>
 
-      <div class="card">
-        <h2>Naskah Narasi</h2>
-        <div id="script"></div>
-      </div>
+    <button id="generateBtn">✨ GENERATE RESEARCH STORY</button>
+    <div id="status" class="status"></div>
+  </section>
 
-      <div class="card">
-        <h2>Storyboard</h2>
-        <div id="storyboard"></div>
-      </div>
-
-      <div class="card">
-        <h2>YouTube Package</h2>
-        <div id="youtube"></div>
-      </div>
-    </section>
-  </main>
-  <script src="app.js"></script>
+  <section id="result" class="results hidden">
+    <div class="card">
+      <h2>Research Brief</h2>
+      <div id="research"></div>
+    </div>
+    <div class="card">
+      <h2>Story Concept</h2>
+      <div id="concept"></div>
+    </div>
+    <div class="card">
+      <h2>Character Bible</h2>
+      <div id="character"></div>
+    </div>
+    <div class="card">
+      <h2>Story Bible</h2>
+      <div id="story"></div>
+    </div>
+    <div class="card">
+      <h2>Naskah Narasi</h2>
+      <div id="script"></div>
+    </div>
+    <div class="card">
+      <h2>Storyboard</h2>
+      <div id="storyboard"></div>
+    </div>
+    <div class="card">
+      <h2>YouTube Package</h2>
+      <div id="youtube"></div>
+    </div>
+  </section>
+</main>
+<script src="app.js"></script>
 </body>
 </html>
