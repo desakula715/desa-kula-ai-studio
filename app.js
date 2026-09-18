@@ -1,415 +1,104 @@
-/*
-  Desa Kula AI Studio V3
-  Frontend untuk backend Cloudflare Worker.
-*/
-
 const API_URL = "https://desa-kula-ai.bangziest.workers.dev/generate";
 
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
+const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+}[c]));
 
-function esc(s = "") {
-  return String(s).replace(/[&<>"']/g, c => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  }[c]));
+function list(items){
+  if(!Array.isArray(items)) return "";
+  return items.map(x => `<span class="pill">${esc(x)}</span>`).join("");
 }
 
-function render(data) {
-  const plan = data.content_plan || {};
-  const outline = Array.isArray(plan.outline)
-    ? plan.outline
-    : [];
+function render(data){
+  $("result").classList.remove("hidden");
+  const c = data.story_concept || {};
+  const ch = data.character_bible || {};
+  const s = data.story_bible || {};
+  const y = data.youtube_package || {};
 
-  $("contentPlan").innerHTML = `
-    <div class="card">
-      <h3>Judul kerja</h3>
-      <p>${esc(plan.judul_kerja || "")}</p>
-    </div>
+  $("concept").innerHTML = `
+    <h3>Premis</h3><div class="result-block">${esc(c.premise)}</div>
+    <h3>Hook</h3><div class="result-block">${esc(c.hook)}</div>
+    <h3>Konflik Utama</h3><div class="result-block">${esc(c.main_conflict)}</div>
+    <h3>Emosi</h3><div>${list(c.emotional_arc)}</div>
+    <h3>Visual Style Bible</h3><div class="result-block">${esc(c.visual_style_bible)}</div>`;
 
-    <div class="card">
-      <h3>Hook</h3>
-      <p>${esc(plan.hook || "")}</p>
-    </div>
+  $("character").innerHTML = `
+    <h3>Nama</h3><div>${esc(ch.name)}</div>
+    <h3>Profil</h3><div class="result-block">${esc(ch.profile)}</div>
+    <h3>Ciri Visual Konsisten</h3><div class="result-block">${esc(ch.visual_traits)}</div>
+    <h3>Kepribadian</h3><div class="result-block">${esc(ch.personality)}</div>`;
 
-    <div class="card">
-      <h3>Pertanyaan utama</h3>
-      <p>${esc(plan.pertanyaan_utama || "")}</p>
-    </div>
+  $("story").innerHTML = `
+    <h3>Story Beats</h3><div>${list(s.story_beats)}</div>
+    <h3>Alur</h3><div class="result-block">${esc(s.arc)}</div>
+    <h3>Solusi / Refleksi</h3><div class="result-block">${esc(s.reflection)}</div>`;
 
-    <div class="card">
-      <h3>Angle</h3>
-      <p>${esc(plan.angle || "")}</p>
-    </div>
+  $("script").innerHTML = `
+    <div class="meta">${esc(data.meta?.word_count || "")} kata • minimum ${esc(data.meta?.minimum_duration || "10 menit")}</div>
+    <div class="result-block">${esc(data.script?.narration || "")}</div>`;
 
-    <div class="card">
-      <h3>Outline</h3>
-      <p>
-        ${outline.map((x, i) =>
-          `${String(i + 1).padStart(2, "0")}. ${esc(x)}`
-        ).join("<br>")}
-      </p>
-    </div>
-  `;
-
-  const script = data.script || "";
-
-  $("scriptText").textContent = script;
-
-  const words = script.trim()
-    ? script.trim().split(/\s+/).length
-    : 0;
-
-  $("wordCount").textContent =
-    `${words.toLocaleString("id-ID")} kata`;
-
-  const scenes = Array.isArray(data.storyboard)
-    ? data.storyboard
-    : [];
-
-  $("storyboard").innerHTML = scenes.map((s, i) => `
+  const scenes = data.storyboard || [];
+  $("storyboard").innerHTML = scenes.map(sc => `
     <div class="scene">
+      <div class="scene-title">Scene ${esc(sc.scene)} — ${esc(sc.duration)}</div>
+      <p><b>Story Beat:</b> ${esc(sc.story_beat)}</p>
+      <p><b>Karakter:</b> ${esc(sc.character)}</p>
+      <p><b>Emosi:</b> ${esc(sc.emotion)}</p>
+      <p><b>Visual:</b> ${esc(sc.visual)}</p>
+      <p><b>Kamera:</b> ${esc(sc.camera)}</p>
+      <p><b>Narasi:</b> ${esc(sc.voice_over)}</p>
+      <p><b>Kinetic Text:</b> ${esc(sc.on_screen)}</p>
+      <p><b>AI Visual Prompt:</b> ${esc(sc.ai_visual_prompt)}</p>
+      <p><b>Continuity:</b> ${esc(sc.continuity)}</p>
+    </div>`).join("");
 
-      <div class="scene-num">
-        ${esc(
-          s.scene ||
-          String(i + 1).padStart(2, "0")
-        )}
-      </div>
-
-      <div>
-        <b>Scene ${i + 1}</b>
-
-        <small>
-          <strong>Durasi:</strong><br>
-          ${esc(s.duration || "")}
-        </small>
-
-        <small>
-          <strong>Voice Over:</strong><br>
-          ${esc(s.voice_over || "")}
-        </small>
-      </div>
-
-      <div class="scene-visual">
-
-        <b>VISUAL</b><br>
-        ${esc(s.visual || "")}
-
-        <br><br>
-
-        <b>ON-SCREEN</b><br>
-        ${esc(s.on_screen || "")}
-
-        <br><br>
-
-        <b>FOOTAGE TYPE</b><br>
-        ${esc(s.footage_type || "")}
-
-        <br><br>
-
-        <b>AI VISUAL PROMPT</b><br>
-        ${esc(s.ai_visual_prompt || "")}
-
-      </div>
-
-    </div>
-  `).join("");
-
-  const yt = data.youtube_package || {};
-
-  const titles = Array.isArray(yt.titles)
-    ? yt.titles
-    : [];
-
-  const tags = Array.isArray(yt.tags)
-    ? yt.tags
-    : [];
-
-  $("youtubePack").innerHTML = `
-
-    <div class="card">
-      <h3>Alternatif judul</h3>
-      <p>
-        ${titles.map((x, i) =>
-          `${i + 1}. ${esc(x)}`
-        ).join("<br>")}
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>Deskripsi</h3>
-      <p>
-        ${esc(yt.description || "")}
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>Thumbnail text</h3>
-      <p>
-        ${esc(yt.thumbnail_text || "")}
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>Tag</h3>
-      <p>
-        ${tags.map(x =>
-          `<span class="tag">${esc(x)}</span>`
-        ).join(" ")}
-      </p>
-    </div>
-
-  `;
+  $("youtube").innerHTML = `
+    <h3>Judul</h3><div>${list(y.titles)}</div>
+    <h3>Deskripsi</h3><div class="result-block">${esc(y.description)}</div>
+    <h3>Thumbnail Text</h3><div>${esc(y.thumbnail_text)}</div>
+    <h3>Tags</h3><div>${list(y.tags)}</div>
+    <h3>Sumber / Verifikasi</h3><div class="result-block">${esc(y.source_note)}</div>`;
 }
 
+$("generateBtn").addEventListener("click", async () => {
+  const topic = $("topic").value.trim();
+  const sourceText = $("sourceText").value.trim();
+  const direction = $("direction").value.trim();
 
-$("generateBtn").addEventListener(
-  "click",
-  async () => {
-
-    const topic = $("topic").value.trim();
-
-    if (!topic) {
-      $("topic").focus();
-      $("status").textContent =
-        "Masukkan topik";
-      return;
-    }
-
-    const payload = {
-      topic,
-      category: $("category").value,
-      duration: Number($("duration").value),
-      style: $("style").value
-    };
-
-    $("generateBtn").disabled = true;
-
-    $("status").textContent =
-      "AI sedang menulis...";
-
-    $("result").classList.remove("hidden");
-
-    $("contentPlan").innerHTML = `
-      <div class="card">
-        <p>
-          AI sedang menyusun content plan,
-          naskah 10+ menit, storyboard,
-          dan paket YouTube. Mohon tunggu...
-        </p>
-      </div>
-    `;
-
-    $("scriptText").textContent = "";
-
-    $("storyboard").innerHTML = "";
-
-    $("youtubePack").innerHTML = "";
-
-
-    try {
-
-      const res = await fetch(API_URL, {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify(payload)
-
-      });
-
-
-      const raw = await res.text();
-
-      let data;
-
-
-      try {
-
-        data = JSON.parse(raw);
-
-      } catch {
-
-        throw new Error(
-          raw ||
-          "Respons backend tidak valid."
-        );
-
-      }
-
-
-      if (!res.ok) {
-
-        throw new Error(
-          data.error ||
-          "Backend AI gagal."
-        );
-
-      }
-
-
-      render(data);
-
-      $("status").textContent =
-        "Selesai";
-
-      window.currentData = data;
-
-
-      window.scrollTo({
-
-        top:
-          $("result").offsetTop - 15,
-
-        behavior:
-          "smooth"
-
-      });
-
-
-    } catch (err) {
-
-      $("status").textContent =
-        "Gagal";
-
-      $("contentPlan").innerHTML = `
-        <div class="error">
-
-          <b>
-            Gagal membuat konten.
-          </b>
-
-          <br>
-
-          ${esc(err.message)}
-
-        </div>
-      `;
-
-    } finally {
-
-      $("generateBtn").disabled =
-        false;
-
-    }
-
+  if(!topic && !sourceText){
+    $("status").textContent = "Isi topik atau paste artikel/bahan cerita terlebih dahulu.";
+    return;
   }
-);
 
+  const btn = $("generateBtn");
+  btn.disabled = true;
+  $("status").textContent = "AI sedang menyusun cerita, karakter, naskah, dan storyboard...";
 
-$("copyBtn").addEventListener(
-  "click",
-  async () => {
+  try{
+    const res = await fetch(API_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        topic,
+        source_text:sourceText,
+        direction,
+        category:$("category").value,
+        style:$("style").value,
+        character_mode:$("characterMode").value,
+        duration:$("duration").value
+      })
+    });
 
-    const d = window.currentData;
-
-    if (!d) return;
-
-
-    const plan =
-      d.content_plan || {};
-
-    const yt =
-      d.youtube_package || {};
-
-
-    const text = [
-
-      "DESA KULA AI STUDIO",
-
-      plan.judul_kerja || "",
-
-      "",
-
-      "HOOK",
-
-      plan.hook || "",
-
-      "",
-
-      "PERTANYAAN UTAMA",
-
-      plan.pertanyaan_utama || "",
-
-      "",
-
-      "ANGLE",
-
-      plan.angle || "",
-
-      "",
-
-      "OUTLINE",
-
-      ...(plan.outline || []).map(
-        (x, i) =>
-          `${i + 1}. ${x}`
-      ),
-
-      "",
-
-      "NASKAH",
-
-      d.script || "",
-
-      "",
-
-      "ALTERNATIF JUDUL",
-
-      ...(yt.titles || []).map(
-        (x, i) =>
-          `${i + 1}. ${x}`
-      ),
-
-      "",
-
-      "DESKRIPSI",
-
-      yt.description || "",
-
-      "",
-
-      "THUMBNAIL TEXT",
-
-      yt.thumbnail_text || "",
-
-      "",
-
-      "TAGS",
-
-      (yt.tags || []).join(", ")
-
-    ].join("\n");
-
-
-    try {
-
-      await navigator.clipboard
-        .writeText(text);
-
-      $("copyBtn").textContent =
-        "Tersalin ✓";
-
-
-      setTimeout(() => {
-
-        $("copyBtn").textContent =
-          "Salin";
-
-      }, 1500);
-
-
-    } catch {
-
-      alert(text);
-
-    }
-
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || "Gagal menghubungi AI.");
+    render(data);
+    $("status").textContent = "Selesai. Story Engine berhasil membuat rancangan video.";
+    window.scrollTo({top:document.getElementById("result").offsetTop-20,behavior:"smooth"});
+  }catch(err){
+    $("status").textContent = "Terjadi kesalahan: " + err.message;
+  }finally{
+    btn.disabled = false;
   }
-);
+});

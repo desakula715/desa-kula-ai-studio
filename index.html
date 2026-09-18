@@ -1,102 +1,111 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Desa Kula AI Studio</title>
-  <meta name="description" content="Desa Kula AI Studio — AI Content Planner untuk storytelling desa.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desa Kula AI Studio — V4 Story Engine</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="app-shell">
+  <main class="app">
     <header class="hero">
-      <div class="brand-mark">DK</div>
-      <div>
-        <div class="eyebrow">DESA KULA</div>
-        <h1>AI Studio</h1>
-        <p>Membaca • Menulis • Membumi di Desa</p>
-      </div>
-      <div class="badge">V2 • AI Script</div>
+      <div class="brand">DESA KULA <span>AI STUDIO</span></div>
+      <p>Membaca • Menulis • Membumi di Desa</p>
+      <div class="version">V4 • STORY ENGINE</div>
     </header>
 
-    <section class="panel">
-      <div class="section-title">
-        <div><span class="step">01</span><h2>Buat konten baru</h2></div>
-        <span class="status" id="status">Siap</span>
-      </div>
+    <section class="card">
+      <h2>Bahan Cerita</h2>
+      <p class="hint">Masukkan topik singkat, atau paste artikel/naskah yang ingin diolah. AI akan mempertahankan pesan utama dan mengikuti arahan alur Anda.</p>
 
-      <label for="topic">Topik konten</label>
-      <textarea id="topic" rows="3" placeholder="Contoh: Kenapa anak muda desa banyak memilih pergi ke kota?"></textarea>
+      <label for="topic">TOPIK SINGKAT</label>
+      <input id="topic" type="text" placeholder="Contoh: Kenapa anak muda desa banyak memilih pergi ke kota?">
+
+      <label for="sourceText">ARTIKEL / BAHAN CERITA</label>
+      <textarea id="sourceText" rows="12" placeholder="Paste artikel, berita, bahan riset, atau naskah Anda di sini..."></textarea>
+
+      <label for="direction">ARAHAN ALUR YANG ANDA INGINKAN</label>
+      <textarea id="direction" rows="5" placeholder="Contoh: Buka dengan cerita seorang pemuda desa. Jangan langsung membahas data. Bangun rasa penasaran sampai menit ke-2. Jelaskan regulasi dengan bahasa sederhana dan akhiri dengan refleksi."></textarea>
 
       <div class="grid">
         <div>
-          <label for="category">Kategori</label>
+          <label for="category">MODE KONTEN</label>
           <select id="category">
-            <option>Cerita Desa</option>
-            <option>Ekonomi Desa</option>
-            <option>Dana Desa</option>
-            <option>Regulasi Desa</option>
-            <option>Pemerintahan Desa</option>
-            <option>Desa Masa Depan</option>
+            <option value="Cerita Desa">Cerita Desa</option>
+            <option value="Dana Desa">Dana Desa</option>
+            <option value="Regulasi Desa">Regulasi Desa</option>
+            <option value="Berita Desa">Berita Desa</option>
+            <option value="Data Desa">Data Desa</option>
+            <option value="Human Story">Human Story</option>
           </select>
         </div>
         <div>
-          <label for="duration">Durasi minimal</label>
-          <select id="duration">
-            <option value="10">10 menit</option>
-            <option value="12">12 menit</option>
-            <option value="15">15 menit</option>
-            <option value="20">20 menit</option>
-            <option value="30">30 menit</option>
+          <label for="style">GAYA CERITA</label>
+          <select id="style">
+            <option value="Animated Documentary">Animated Documentary</option>
+            <option value="Documentary">Documentary</option>
+            <option value="Human Story">Human Story</option>
+            <option value="Data Story">Data Story</option>
+            <option value="Explainer">Explainer</option>
           </select>
         </div>
       </div>
 
-      <label for="style">Gaya narasi</label>
-      <select id="style">
-        <option>Desa Kula Documentary</option>
-        <option>Storytelling Human Interest</option>
-        <option>Explainer Desa</option>
-        <option>Analisis Kebijakan Desa</option>
-      </select>
+      <div class="grid">
+        <div>
+          <label for="characterMode">KARAKTER</label>
+          <select id="characterMode">
+            <option value="AI Tentukan Otomatis">AI Tentukan Otomatis</option>
+            <option value="Gunakan 1 Karakter Utama">Gunakan 1 Karakter Utama</option>
+            <option value="Tanpa Karakter">Tanpa Karakter / Explainer</option>
+          </select>
+        </div>
+        <div>
+          <label for="duration">DURASI MINIMUM</label>
+          <select id="duration">
+            <option value="10 menit">10 menit</option>
+            <option value="12 menit">12 menit</option>
+            <option value="15 menit">15 menit</option>
+            <option value="20 menit">20 menit</option>
+          </select>
+        </div>
+      </div>
 
-      <button id="generateBtn" class="primary">✨ GENERATE NASKAH AI</button>
-      <p class="hint">V2 memakai backend AI. API key tidak disimpan di halaman GitHub Pages. Backend akan menggunakan model AI untuk menyusun naskah minimal 10 menit dan storyboard.</p>
+      <button id="generateBtn">✨ GENERATE STORY</button>
+      <div id="status" class="status"></div>
     </section>
 
-    <section id="result" class="result hidden">
-      <div class="panel">
-        <div class="section-title">
-          <div><span class="step">02</span><h2>Content Plan AI</h2></div>
-          <button id="copyBtn" class="secondary">Salin</button>
-        </div>
-        <div id="contentPlan"></div>
+    <section id="result" class="results hidden">
+      <div class="card">
+        <h2>Story Concept</h2>
+        <div id="concept"></div>
       </div>
 
-      <div class="panel">
-        <div class="section-title">
-          <div><span class="step">03</span><h2>Naskah Narasi</h2></div>
-          <span id="wordCount" class="count"></span>
-        </div>
-        <pre id="scriptText" class="script-box"></pre>
+      <div class="card">
+        <h2>Character Bible</h2>
+        <div id="character"></div>
       </div>
 
-      <div class="panel">
-        <div class="section-title">
-          <div><span class="step">04</span><h2>Storyboard</h2></div>
-        </div>
-        <div id="storyboard" class="storyboard"></div>
+      <div class="card">
+        <h2>Story Bible</h2>
+        <div id="story"></div>
       </div>
 
-      <div class="panel">
-        <div class="section-title">
-          <div><span class="step">05</span><h2>Paket YouTube</h2></div>
-        </div>
-        <div id="youtubePack"></div>
+      <div class="card">
+        <h2>Naskah Narasi</h2>
+        <div id="script"></div>
+      </div>
+
+      <div class="card">
+        <h2>Storyboard</h2>
+        <div id="storyboard"></div>
+      </div>
+
+      <div class="card">
+        <h2>YouTube Package</h2>
+        <div id="youtube"></div>
       </div>
     </section>
-
-    <footer>Desa Kula AI Studio • V2 AI Script • Minimal 10 menit</footer>
   </main>
   <script src="app.js"></script>
 </body>
